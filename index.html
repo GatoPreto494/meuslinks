@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Links</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        .link-container {
+            margin-bottom: 15px;
+        }
+        .link-container textarea {
+            width: 70%;
+            padding: 5px;
+            height: 100px;
+            resize: none;
+        }
+        .link-container button {
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+        .link-list {
+            list-style: none;
+            padding: 0;
+        }
+        .link-list li {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            word-break: break-word;
+        }
+        .link-number {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .link-text {
+            white-space: pre-wrap;
+            cursor: pointer;
+            max-width: 70%;
+        }
+        .link-list li button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .link-list li button:hover {
+            background-color: darkred;
+        }
+        #copyAlert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        #alertBox {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            width: 300px;
+        }
+        #alertBox button {
+            padding: 10px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        #alertBox button:hover {
+            background-color: darkgreen;
+        }
+        .clear-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: orange;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .clear-btn:hover {
+            background-color: darkorange;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gerenciador de Links</h1>
+
+    <div class="link-container">
+        <textarea id="newLinks" placeholder="Cole os links aqui, um por linha ou separados por vírgula..."></textarea>
+        <button onclick="addLinks()">Adicionar Links</button>
+    </div>
+
+    <ul class="link-list" id="linkList"></ul>
+
+    <button class="clear-btn" onclick="clearAllLinks()">Limpar Todos os Links</button>
+
+    <div id="copyAlert" onclick="closeAlert(event)">
+        <div id="alertBox">
+            <p>Link copiado para a área de transferência!</p>
+            <button>Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        function getStoredLinks() {
+            const storedLinks = localStorage.getItem('savedLinks');
+            return storedLinks ? JSON.parse(storedLinks) : [];
+        }
+
+        let links = getStoredLinks();
+
+        function displayLinks() {
+            const linkList = document.getElementById('linkList');
+            linkList.innerHTML = '';
+
+            links.forEach((link, index) => {
+                const li = document.createElement('li');
+                li.id = `link-${index}`;
+                li.innerHTML = `
+                    <span class="link-number">${index + 1}.</span>
+                    <div class="link-text" onclick="copyLink(${index}, this)">${link}</div>
+                    <button onclick="removeLink(${index})">Remover</button>
+                `;
+                linkList.appendChild(li);
+            });
+
+            localStorage.setItem('savedLinks', JSON.stringify(links));
+        }
+
+        function copyLink(index, element) {
+            const link = links[index];
+
+            navigator.clipboard.writeText(link).then(() => {
+                showAlert();
+                element.parentElement.remove(); // Remove do DOM ao copiar
+            }).catch(err => {
+                console.error('Erro ao copiar o link: ', err);
+            });
+        }
+
+        function addLinks() {
+            const inputText = document.getElementById('newLinks').value.trim();
+            if (inputText) {
+                const newLinks = inputText.split(/[\n,]+/).map(link => link.trim()).filter(link => link);
+                links = [...new Set([...links, ...newLinks])]; // Remove duplicados
+                document.getElementById('newLinks').value = '';
+                displayLinks();
+            } else {
+                alert('Por favor, insira pelo menos um link!');
+            }
+        }
+
+        function removeLink(index) {
+            links.splice(index, 1);
+            displayLinks();
+        }
+
+        function clearAllLinks() {
+            if (confirm('Tem certeza de que deseja apagar todos os links?')) {
+                links = [];
+                localStorage.removeItem('savedLinks');
+                displayLinks();
+            }
+        }
+
+        function showAlert() {
+            document.getElementById('copyAlert').style.display = 'flex';
+        }
+
+        function closeAlert(event) {
+            if (event.target === document.getElementById('copyAlert') || event.target.tagName === 'BUTTON') {
+                document.getElementById('copyAlert').style.display = 'none';
+            }
+        }
+
+        displayLinks();
+    </script>
+</body>
+</html>
