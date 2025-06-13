@@ -8,193 +8,405 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #f9f9f9;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            min-height: calc(100vh - 40px);
         }
-        h1 {
-            text-align: center;
+        .main-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-        .link-container {
-            margin-bottom: 15px;
+        .left-panel {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #eee;
         }
-        .link-container textarea {
-            width: 70%;
-            padding: 5px;
-            height: 100px;
-            resize: none;
+        .right-panel {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 80px);
         }
-        .link-container button {
-            padding: 5px 10px;
-            margin-left: 10px;
+        .right-panel h2 {
+            display: flex; /* Para alinhar o título com o botão de modo edição */
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0;
+            color: #333;
         }
-        .link-list {
+        input[type="text"], textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 5px; /* Espaçamento entre botões */
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        ul {
             list-style: none;
             padding: 0;
         }
-        .link-list li {
-            margin: 10px 0;
+        li {
+            background-color: #e9e9e9;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 4px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            word-break: break-word;
+            word-break: break-all;
         }
-        .link-number {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .link-text {
-            white-space: pre-wrap;
-            cursor: pointer;
-            max-width: 70%;
-        }
-        .link-list li button {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 5px;
-            cursor: pointer;
-        }
-        .link-list li button:hover {
-            background-color: darkred;
-        }
-        #copyAlert {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
+        li.hidden {
             display: none;
+        }
+        li span {
+            margin-right: 8px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        li a {
+            color: #007BFF;
+            text-decoration: none;
+            cursor: pointer;
+            flex-grow: 1;
+            word-break: break-all;
+        }
+        li a:hover {
+            text-decoration: underline;
+        }
+        .success-message {
+            color: green;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .actions {
+            margin-left: auto;
+            display: flex;
+            gap: 5px;
+            visibility: hidden; /* Inicialmente invisível */
+            opacity: 0; /* Inicialmente transparente */
+            transition: visibility 0s, opacity 0.3s ease-in-out; /* Transição suave */
+        }
+        .actions.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        .actions button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-size: 18px;
+            color: #555;
+            margin-right: 0; /* Remove margem extra dos botões de ação */
+        }
+        .actions button:hover {
+            color: #000;
+        }
+        .actions button.delete-btn {
+            color: #dc3545;
+        }
+        .actions button.delete-btn:hover {
+            color: #c82333;
+        }
+        /* Estilos para o modal de edição */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
             justify-content: center;
             align-items: center;
-            z-index: 9999;
         }
-        #alertBox {
-            background-color: white;
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
             padding: 20px;
-            border-radius: 5px;
-            text-align: center;
-            width: 300px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        #alertBox button {
-            padding: 10px;
-            background-color: green;
-            color: white;
-            border: none;
+        .modal-content h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .modal-content input[type="text"] {
+            width: calc(100% - 20px);
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
             cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
         }
-        #alertBox button:hover {
-            background-color: darkgreen;
+        .toggle-edit-mode-btn {
+            background-color: #6c757d; /* Cor diferente para o botão de modo edição */
+            padding: 8px 12px;
+            font-size: 14px;
         }
-        .clear-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 10px;
-            background-color: orange;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 5px;
-        }
-        .clear-btn:hover {
-            background-color: darkorange;
+        .toggle-edit-mode-btn:hover {
+            background-color: #5a6268;
         }
     </style>
 </head>
 <body>
-    <h1>Gerenciador de Links</h1>
+    <div class="main-container">
+        <div class="left-panel">
+            <h1>Gerenciador de Links 🔗</h1>
+            <hr>
+            <h2>Adicionar Link Unitário</h2>
+            <input type="text" id="singleLinkInput" placeholder="Cole o link aqui">
+            <button onclick="addSingleLink()">Adicionar Link</button>
+            <p id="singleSuccessMessage" class="success-message"></p>
+            <hr>
+            <h2>Adicionar Vários Links</h2>
+            <textarea id="multipleLinksInput" rows="5" placeholder="Cole vários links aqui, um por linha"></textarea>
+            <button onclick="addMultipleLinks()">Adicionar Links</button>
+            <p id="multipleSuccessMessage" class="success-message"></p>
+        </div>
 
-    <div class="link-container">
-        <textarea id="newLinks" placeholder="Cole os links aqui, um por linha ou separados por vírgula..."></textarea>
-        <button onclick="addLinks()">Adicionar Links</button>
+        <div class="right-panel">
+            <h2>
+                Lista de Links
+                <button class="toggle-edit-mode-btn" onclick="toggleEditMode()">
+                    Modo Edição
+                </button>
+            </h2>
+            <ul id="linkList">
+                </ul>
+        </div>
     </div>
 
-    <ul class="link-list" id="linkList"></ul>
-
-    <button class="clear-btn" onclick="clearAllLinks()">Limpar Todos os Links</button>
-
-    <div id="copyAlert" onclick="closeAlert(event)">
-        <div id="alertBox">
-            <p>Link copiado para a área de transferência!</p>
-            <button>Fechar</button>
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeEditModal()">&times;</span>
+            <h3>Editar Link</h3>
+            <input type="text" id="editLinkInput">
+            <div class="modal-buttons">
+                <button onclick="saveEditedLink()">Salvar</button>
+                <button onclick="closeEditModal()" style="background-color: #6c757d;">Cancelar</button>
+            </div>
         </div>
     </div>
 
     <script>
-        function getStoredLinks() {
-            const storedLinks = localStorage.getItem('savedLinks');
-            return storedLinks ? JSON.parse(storedLinks) : [];
-        }
+        document.addEventListener('DOMContentLoaded', loadLinks);
 
-        let links = getStoredLinks();
+        let currentEditingLi = null;
+        let isEditMode = false; // Variável para controlar o modo de edição
 
-        function displayLinks() {
-            const linkList = document.getElementById('linkList');
-            linkList.innerHTML = '';
-
-            links.forEach((link, index) => {
-                const li = document.createElement('li');
-                li.id = `link-${index}`;
-                li.innerHTML = `
-                    <span class="link-number">${index + 1}.</span>
-                    <div class="link-text" onclick="copyLink(${index}, this)">${link}</div>
-                    <button onclick="removeLink(${index})">Remover</button>
-                `;
-                linkList.appendChild(li);
-            });
-
-            localStorage.setItem('savedLinks', JSON.stringify(links));
-        }
-
-        function copyLink(index, element) {
-            const link = links[index];
-
-            navigator.clipboard.writeText(link).then(() => {
-                showAlert();
-                element.parentElement.remove(); // Remove do DOM ao copiar
-            }).catch(err => {
-                console.error('Erro ao copiar o link: ', err);
-            });
-        }
-
-        function addLinks() {
-            const inputText = document.getElementById('newLinks').value.trim();
-            if (inputText) {
-                const newLinks = inputText.split(/[\n,]+/).map(link => link.trim()).filter(link => link);
-                links = [...new Set([...links, ...newLinks])]; // Remove duplicados
-                document.getElementById('newLinks').value = '';
-                displayLinks();
+        function addSingleLink() {
+            const input = document.getElementById('singleLinkInput');
+            const url = input.value.trim();
+            if (url) {
+                addLinkToList(url);
+                input.value = '';
+                showSuccessMessage('singleSuccessMessage', 'Link adicionado com sucesso! 🎉');
             } else {
-                alert('Por favor, insira pelo menos um link!');
+                alert('Por favor, insira um link.');
             }
         }
 
-        function removeLink(index) {
-            links.splice(index, 1);
-            displayLinks();
-        }
-
-        function clearAllLinks() {
-            if (confirm('Tem certeza de que deseja apagar todos os links?')) {
-                links = [];
-                localStorage.removeItem('savedLinks');
-                displayLinks();
+        function addMultipleLinks() {
+            const textarea = document.getElementById('multipleLinksInput');
+            const urls = textarea.value.trim().split('\n').filter(url => url.trim() !== '');
+            if (urls.length > 0) {
+                urls.forEach(url => addLinkToList(url.trim()));
+                textarea.value = '';
+                showSuccessMessage('multipleSuccessMessage', 'Links adicionados com sucesso! 🎉');
+            } else {
+                alert('Por favor, insira um ou mais links, um por linha.');
             }
         }
 
-        function showAlert() {
-            document.getElementById('copyAlert').style.display = 'flex';
-        }
+        function addLinkToList(url, isReloading = false) {
+            const linkList = document.getElementById('linkList');
+            const li = document.createElement('li');
 
-        function closeAlert(event) {
-            if (event.target === document.getElementById('copyAlert') || event.target.tagName === 'BUTTON') {
-                document.getElementById('copyAlert').style.display = 'none';
+            const linkElement = document.createElement('a');
+            linkElement.href = '#';
+            linkElement.textContent = url;
+            linkElement.onclick = function(event) {
+                event.preventDefault();
+                copyToClipboard(url);
+                li.classList.add('hidden');
+            };
+
+            const span = document.createElement('span');
+            // Numeração será atualizada por updateLinkNumbering
+            li.appendChild(span);
+
+            li.appendChild(linkElement);
+
+            const actionsDiv = document.createElement('div');
+            actionsDiv.classList.add('actions');
+            // Adiciona a classe 'visible' se o modo de edição já estiver ativo ao carregar
+            if (isEditMode) {
+                actionsDiv.classList.add('visible');
+            }
+
+            const editButton = document.createElement('button');
+            editButton.innerHTML = '✏️';
+            editButton.title = 'Editar link';
+            editButton.onclick = function() {
+                openEditModal(li, url);
+            };
+
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = '🗑️';
+            deleteButton.title = 'Apagar link';
+            deleteButton.classList.add('delete-btn');
+            deleteButton.onclick = function() {
+                if (confirm('Tem certeza que deseja apagar este link?')) {
+                    deleteLink(li, url);
+                }
+            };
+
+            actionsDiv.appendChild(editButton);
+            actionsDiv.appendChild(deleteButton);
+            li.appendChild(actionsDiv);
+
+            linkList.appendChild(li);
+
+            if (!isReloading) {
+                saveLink(url);
+                updateLinkNumbering(); // Atualiza a numeração imediatamente após adicionar
             }
         }
 
-        displayLinks();
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+
+        function showSuccessMessage(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            setTimeout(() => {
+                element.textContent = '';
+            }, 3000);
+        }
+
+        function saveLink(url) {
+            let links = JSON.parse(localStorage.getItem('savedLinks')) || [];
+            if (!links.includes(url)) {
+                links.push(url);
+                localStorage.setItem('savedLinks', JSON.stringify(links));
+            }
+        }
+
+        function loadLinks() {
+            let links = JSON.parse(localStorage.getItem('savedLinks')) || [];
+            links.forEach(url => addLinkToList(url, true));
+            updateLinkNumbering(); // Garante que a numeração esteja correta ao carregar
+        }
+
+        function deleteLink(liElement, urlToDelete) {
+            liElement.remove();
+            let links = JSON.parse(localStorage.getItem('savedLinks')) || [];
+            links = links.filter(url => url !== urlToDelete);
+            localStorage.setItem('savedLinks', JSON.stringify(links));
+            updateLinkNumbering();
+        }
+
+        function openEditModal(liElement, currentUrl) {
+            currentEditingLi = liElement;
+            const editLinkInput = document.getElementById('editLinkInput');
+            editLinkInput.value = currentUrl;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            currentEditingLi = null;
+        }
+
+        function saveEditedLink() {
+            if (!currentEditingLi) return;
+
+            const oldUrl = currentEditingLi.querySelector('a').textContent;
+            const newUrl = document.getElementById('editLinkInput').value.trim();
+
+            if (newUrl && newUrl !== oldUrl) {
+                currentEditingLi.querySelector('a').textContent = newUrl;
+
+                let links = JSON.parse(localStorage.getItem('savedLinks')) || [];
+                const index = links.indexOf(oldUrl);
+                if (index > -1) {
+                    links[index] = newUrl;
+                    localStorage.setItem('savedLinks', JSON.stringify(links));
+                }
+            }
+            closeEditModal();
+        }
+
+        function updateLinkNumbering() {
+            const linkList = document.getElementById('linkList');
+            const listItems = linkList.querySelectorAll('li:not(.hidden)');
+            listItems.forEach((li, index) => {
+                const span = li.querySelector('span');
+                if (span) {
+                    span.textContent = `${index + 1}.`;
+                }
+            });
+        }
+
+        // Nova função para alternar o modo de edição
+        function toggleEditMode() {
+            isEditMode = !isEditMode; // Inverte o estado
+            const toggleButton = document.querySelector('.toggle-edit-mode-btn');
+            const allActions = document.querySelectorAll('.actions');
+
+            if (isEditMode) {
+                toggleButton.textContent = 'Sair do Modo Edição';
+                toggleButton.style.backgroundColor = '#dc3545'; /* Mudar cor para indicar modo ativo */
+                allActions.forEach(actionDiv => actionDiv.classList.add('visible'));
+            } else {
+                toggleButton.textContent = 'Modo Edição';
+                toggleButton.style.backgroundColor = '#6c757d';
+                allActions.forEach(actionDiv => actionDiv.classList.remove('visible'));
+            }
+        }
     </script>
 </body>
 </html>
